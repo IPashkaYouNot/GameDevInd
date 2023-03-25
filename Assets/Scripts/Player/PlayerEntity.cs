@@ -1,5 +1,6 @@
+using Core.Animation;
 using Core.Enums;
-using Player.PlayerAnimation;
+using Core.Tools;
 using System;
 using UnityEngine;
 

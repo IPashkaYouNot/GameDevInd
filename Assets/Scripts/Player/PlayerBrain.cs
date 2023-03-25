@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using InputReader;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Player
