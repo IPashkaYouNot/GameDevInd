@@ -1,4 +1,5 @@
 using Core.Enums;
+using Player.PlayerAnimation;
 using System;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace Player
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerEntity : MonoBehaviour
     {
+        [SerializeField] private AnimatorController _animator;
+
         [Header("HorizontalMovement")]
         [SerializeField] private float _horizontalSpeed;
         [SerializeField] private Direction _direction;
@@ -37,6 +40,8 @@ namespace Player
         private Vector2 _shadowLocalPosition;
         private float _shadowVerticalPosition;
 
+        private Vector2 _movement;
+
         private void Start()
         {
             _rb2d = GetComponent<Rigidbody2D>();
@@ -54,9 +59,20 @@ namespace Player
         {
             if (_isJumping)
                 UpdateJump();
+
+            UpdateAnimations();
         }
+
+        private void UpdateAnimations()
+        {
+            _animator.PlayAnimation(AnimationType.Idle, true);
+            _animator.PlayAnimation(AnimationType.Walk, _movement.magnitude > 0);
+            _animator.PlayAnimation(AnimationType.Jump, _isJumping);
+        }
+
         public void MoveHorizontally(float direction)
         {
+            _movement.x = direction;
             SetDirection(direction);
             var velocity = _rb2d.velocity;
             velocity.x = _horizontalSpeed * direction;
@@ -68,6 +84,7 @@ namespace Player
             if (_isJumping)
                 return;
 
+            _movement.y = direction;
             var velocity = _rb2d.velocity;
             velocity.y = _verticalSpeed * direction;
             _rb2d.velocity = velocity;
@@ -132,9 +149,23 @@ namespace Player
         {
             _isJumping = false;
             _shadow.transform.localPosition = _shadowLocalPosition;
-            _shadow.color = new (0, 0, 0, _startShadowTransparency);
+            _shadow.color = new(0, 0, 0, _startShadowTransparency);
             _rb2d.position = new(_rb2d.position.x, _startJumpVerticalPosition);
             _rb2d.gravityScale = 0;
+        }
+
+        public void StartAttack()
+        {
+            if (!_animator.PlayAnimation(AnimationType.Attack, true))
+                return;
+
+            _animator.AnimationEnded += FinishAttack;
+        }
+
+        private void FinishAttack()
+        {
+            _animator.AnimationEnded -= FinishAttack;
+            _animator.PlayAnimation(AnimationType.Attack, false);
         }
     }
 }
