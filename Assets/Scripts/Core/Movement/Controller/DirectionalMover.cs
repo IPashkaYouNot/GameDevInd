@@ -1,5 +1,7 @@
 ﻿using Core.Enums;
 using Core.Movement.Data;
+using StatsSystem;
+using StatsSystem.Enums;
 using UnityEngine;
 
 namespace Core.Movement.Controller
@@ -10,17 +12,20 @@ namespace Core.Movement.Controller
         private readonly Transform _transform;
         private readonly DirectionalMovementData _directionalMovementData;
         private readonly float _sizeModificator;
+        private readonly IStatValueGiver _statValueGiver;
 
         private Vector2 _movement;
 
         public Direction Direction { get; private set; }
         public bool IsMoving => _movement.magnitude > 0;
 
-        public DirectionalMover(Rigidbody2D rigidbody, DirectionalMovementData directionalMovementData)
+        public DirectionalMover(Rigidbody2D rigidbody, 
+            DirectionalMovementData directionalMovementData, IStatValueGiver statValueGiver)
         {
             _rigidbody = rigidbody;
             _transform = rigidbody.transform;
             _directionalMovementData = directionalMovementData;
+            _statValueGiver = statValueGiver;
             var positionDifference = _directionalMovementData.MaxVerticalPosition -
                 _directionalMovementData.MinVerticalPosition;
             var sizeDifference = _directionalMovementData.MaxSize -
@@ -34,7 +39,7 @@ namespace Core.Movement.Controller
             _movement.x = direction;
             SetDirection(direction);
             var velocity = _rigidbody.velocity;
-            velocity.x = _directionalMovementData.HorizontalSpeed * direction;
+            velocity.x = _statValueGiver.GetStatValue(StatType.Speed) * direction;
             _rigidbody.velocity = velocity;
         }
 
@@ -42,7 +47,7 @@ namespace Core.Movement.Controller
         {
             _movement.y = direction;
             var velocity = _rigidbody.velocity;
-            velocity.y = _directionalMovementData.VerticalSpeed * direction;
+            velocity.y = _statValueGiver.GetStatValue(StatType.Speed)/2 * direction;
             _rigidbody.velocity = velocity;
 
             if (direction == 0)

@@ -3333,11 +3333,12 @@ MonoBehaviour:
     <MinSize>k__BackingField: 0.09
     <MaxVerticalPosition>k__BackingField: -0.7
     <MinVerticalPosition>k__BackingField: -1.4
-  _jumpForce: 600
-  _gravityScale: 5
-  _shadow: {fileID: 1949675685}
-  _shadowSizeModificator: 0.3
-  _shadowAlphaModificator: 0.2
+  _jumpData:
+    <JumpForce>k__BackingField: 600
+    <GravityScale>k__BackingField: 5
+    <Shadow>k__BackingField: {fileID: 1949675685}
+    <ShadowSizeModificator>k__BackingField: 0.2
+    <ShadowAlphaModificator>k__BackingField: 0.1
   _cameras:
     _rightCamera: {fileID: 230971421}
     _leftCamera: {fileID: 1657734806}

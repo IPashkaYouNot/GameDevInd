@@ -1,5 +1,6 @@
 ﻿using Core.Services.Updater;
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -27,7 +28,7 @@ namespace InputReader
             if (Input.GetButtonDown("Jump"))
                 Jump = true;
 
-            if (!IsPointerOverUI() && Input.GetButtonDown("Fire1"))
+            if (!IsPointerOverUI() && Input.GetButtonDown("Fire1") && !Input.touches.Any())
                 Attack = true;
         }
         private bool IsPointerOverUI() => EventSystem.current.IsPointerOverGameObject();

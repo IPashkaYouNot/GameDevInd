@@ -3,6 +3,7 @@ using Core.Animation;
 using Core.Movement.Controller;
 using Core.Movement.Data;
 using Core.Tools;
+using StatsSystem;
 using UnityEngine;
 
 namespace Player
@@ -19,11 +20,11 @@ namespace Player
         private DirectionalMover _directionalMover;
         private Jumper _jumper;
 
-        private void Start()
+        public void Initialize(IStatValueGiver statValueGiver)
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-            _directionalMover = new(_rigidbody, _directionalMovementData);
-            _jumper = new(_jumpData, _rigidbody, _directionalMovementData.MaxSize);
+            _directionalMover = new(_rigidbody, _directionalMovementData, statValueGiver);
+            _jumper = new(_jumpData, _rigidbody, _directionalMovementData.MaxSize, statValueGiver);
         }
 
         private void Update()

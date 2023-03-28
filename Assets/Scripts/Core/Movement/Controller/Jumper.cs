@@ -1,6 +1,7 @@
 ﻿using Core.Movement.Data;
+using StatsSystem;
+using StatsSystem.Enums;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ACore.Movement.Controller
 {
@@ -10,38 +11,43 @@ namespace ACore.Movement.Controller
         private readonly Rigidbody2D _rigidbody;
         private readonly float _maxVerticalSize;
         private readonly Transform _transform;
+
         private readonly Transform _shadowTransform;
         private readonly Vector2 _shadowLocalPosition;
         private readonly Vector2 _shadowLocalScale;
-        private readonly float _shadowOpacity;
+        private readonly Color _shadowColor;
+
+        private readonly IStatValueGiver _statValueGiver;
 
         private float _startJumpVerticalPosition;
         private float _shadowVerticalPosition;
         public bool IsJumping { get; private set; }
 
-        public Jumper(JumpData jumpData, Rigidbody2D rigidbody, float maxVerticalSize)
+        public Jumper(JumpData jumpData, Rigidbody2D rigidbody,
+            float maxVerticalSize, IStatValueGiver statValueGiver)
         {
             _jumpData = jumpData;
             _rigidbody = rigidbody;
             _maxVerticalSize = maxVerticalSize;
+            _statValueGiver = statValueGiver;
             _shadowTransform = _jumpData.Shadow.transform;
             _shadowLocalPosition = _shadowTransform.localPosition;
             _shadowLocalScale = _shadowTransform.localScale;
-            _shadowOpacity = _jumpData.Shadow.color.a;
+            _shadowColor = _jumpData.Shadow.color;
             _transform = _rigidbody.transform;
         }
 
         public void Jump()
         {
-            if (IsJumping) return;
+            if (IsJumping) 
+                return;
 
             IsJumping = true;
             _startJumpVerticalPosition = _rigidbody.position.y;
             var jumpModificator = _transform.localScale.y / _maxVerticalSize;
-            var currentJumpForce = _jumpData.JumpForce * jumpModificator;
+            var currentJumpForce = _statValueGiver.GetStatValue(StatType.JumpForce) * jumpModificator;
             _rigidbody.gravityScale = _jumpData.GravityScale * jumpModificator;
             _rigidbody.AddForce(Vector2.up * currentJumpForce);
-            // _startjumpverticalposition = transform.position.y;
             _shadowVerticalPosition = _shadowTransform.position.y;
         }
         public void UpdateJump()
@@ -55,7 +61,9 @@ namespace ACore.Movement.Controller
             var distance = _rigidbody.transform.position.y - _startJumpVerticalPosition;
             _shadowTransform.position = new(_shadowTransform.position.x, _shadowVerticalPosition);
             _shadowTransform.localScale = _shadowLocalScale * (1 + (_jumpData.ShadowSizeModificator * distance));
-            _jumpData.Shadow.color = new(0, 0, 0, _shadowOpacity - distance * _jumpData.ShadowAlphaModificator);
+            var newShadowColor = _shadowColor;
+            newShadowColor.a -= distance * _jumpData.ShadowAlphaModificator;
+            _jumpData.Shadow.color = newShadowColor;
         }
 
         private void ResetJump()
@@ -65,7 +73,7 @@ namespace ACore.Movement.Controller
 
             _shadowTransform.localScale = _shadowLocalScale;
             _shadowTransform.localPosition = _shadowLocalPosition;
-            _jumpData.Shadow.color = new(0, 0, 0, _shadowOpacity);
+            _jumpData.Shadow.color = _shadowColor;
 
             IsJumping = false;
         }
