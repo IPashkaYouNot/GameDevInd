@@ -3325,18 +3325,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 685403530}
-  _horizontalSpeed: 3
-  _direction: 0
-  _verticalSpeed: 1.5
-  _maxSize: 0.15
-  _minSize: 0.1
-  _maxVerticalPosition: -0.8
-  _minVerticalPosition: -1.4
-  _jumpForce: 600
-  _gravityScale: 5
-  _shadow: {fileID: 1949675685}
-  _shadowSizeModificator: 0.3
-  _shadowAlphaModificator: 0.2
+  _directionalMovementData:
+    <HorizontalSpeed>k__BackingField: 2
+    <Direction>k__BackingField: 0
+    <VerticalSpeed>k__BackingField: 1
+    <MaxSize>k__BackingField: 0.15
+    <MinSize>k__BackingField: 0.09
+    <MaxVerticalPosition>k__BackingField: -0.7
+    <MinVerticalPosition>k__BackingField: -1.4
+  _jumpData:
+    <JumpForce>k__BackingField: 600
+    <GravityScale>k__BackingField: 5
+    <Shadow>k__BackingField: {fileID: 1949675685}
+    <ShadowSizeModificator>k__BackingField: 0.2
+    <ShadowAlphaModificator>k__BackingField: 0.1
   _cameras:
     _rightCamera: {fileID: 230971421}
     _leftCamera: {fileID: 1657734806}
@@ -5262,7 +5264,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1122917008}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20281830e11ae504982e9b0ee3fd1bfb, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a5ea760f42ad964fb30821fc00bf751, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _joystick: {fileID: 1474668084}

@@ -1,12 +1,11 @@
-﻿using Player;
+﻿using Core.Services.Updater;
+using InputReader;
+using Player;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.Core
+namespace Core
 {
     public class GameLevelInitializer : MonoBehaviour
     {
@@ -14,30 +13,44 @@ namespace Assets.Scripts.Core
         [SerializeField] private GameUIInputView _gameUIInputView;
 
         private ExternalDevicesInputReader _externalDevicesInputReader;
-        private PlayerBrain _playerBrain;
+        private PlayerSystem _playerSystem;
+        private ProjectUpdater _projectUpdater;
+
+        private List<IDisposable> _disposables;
 
         private bool _onPause;
         private void Awake()
         {
+            _disposables = new();
+
+            if (ProjectUpdater.Instance is null)
+                _projectUpdater = new GameObject().AddComponent<ProjectUpdater>();
+            else
+                _projectUpdater = ProjectUpdater.Instance as ProjectUpdater;
+
             _externalDevicesInputReader = new();
-            _playerBrain = new(_playerEntity, new()
+            _disposables.Add(_externalDevicesInputReader);
+
+            _playerSystem = new(_playerEntity, new()
             {
                 _gameUIInputView,
                 _externalDevicesInputReader
             });
-        }
-        private void Update()
-        {
-            if (_onPause)
-                return;
-            _externalDevicesInputReader.OnUpdate();
+            _disposables.Add(_playerSystem);
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            if (_onPause)
-                return;
-            _playerBrain.OnFixedUpdate();
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                _projectUpdater.IsPaused = !_projectUpdater.IsPaused;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            foreach (var disposable in _disposables)
+                disposable.Dispose();
         }
     }
 }

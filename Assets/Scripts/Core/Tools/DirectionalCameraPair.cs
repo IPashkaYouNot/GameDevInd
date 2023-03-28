@@ -4,26 +4,29 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class DirectionalCameraPair 
+namespace Core.Tools
 {
-    [SerializeField] private CinemachineVirtualCamera _rightCamera;
-    [SerializeField] private CinemachineVirtualCamera _leftCamera;
-
-    private Dictionary<Direction, CinemachineVirtualCamera> _directionalCameras;
-
-    public Dictionary<Direction, CinemachineVirtualCamera> DirectionalCameras
+    [Serializable]
+    public class DirectionalCameraPair
     {
-        get
+        [SerializeField] private CinemachineVirtualCamera _rightCamera;
+        [SerializeField] private CinemachineVirtualCamera _leftCamera;
+
+        private Dictionary<Direction, CinemachineVirtualCamera> _directionalCameras;
+
+        public Dictionary<Direction, CinemachineVirtualCamera> DirectionalCameras
         {
-            if (_directionalCameras != null)
-                return _directionalCameras;
-            _directionalCameras = new()
+            get
+            {
+                if (_directionalCameras != null)
+                    return _directionalCameras;
+                _directionalCameras = new()
             {
                 { Direction.Right, _rightCamera },
                 { Direction.Left, _leftCamera }
             };
-            return _directionalCameras;
+                return _directionalCameras;
+            }
         }
     }
 }
